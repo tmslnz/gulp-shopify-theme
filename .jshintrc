@@ -1,0 +1,15 @@
+{
+"esversion": 6,
+"unused": true,
+"undef": true,
+"node": true,
+"funcscope": true,
+"freeze": true,
+"eqeqeq": true,
+"notypeof": true,
+"shadow": "outer",
+"asi": false,
+"lastsemic": true,
+"plusplus": true,
+"globals": {}
+}

@@ -1,0 +1,20 @@
+{
+  "name": "gulp-shopify-theme",
+  "version": "1.0.0",
+  "description": "Gulp plugin to automatically upload Shopify themes during development.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "tmslnz <t@theworkers.net> (http://theworkers.net/)",
+  "license": "MIT",
+  "dependencies": {
+    "async": "^2.0.1",
+    "gulp-util": "^3.0.7",
+    "limiter": "^1.1.0",
+    "shopify-api-node": "^1.2.0",
+    "through2": "^2.0.1",
+    "vinyl": "^1.2.0",
+    "vinyl-fs": "^2.4.3"
+  }
+}
