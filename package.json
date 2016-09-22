@@ -11,10 +11,7 @@
   "dependencies": {
     "async": "^2.0.1",
     "gulp-util": "^3.0.7",
-    "limiter": "^1.1.0",
     "shopify-api-node": "^1.2.0",
     "through2": "^2.0.1",
-    "vinyl": "^1.2.0",
-    "vinyl-fs": "^2.4.3"
   }
 }
