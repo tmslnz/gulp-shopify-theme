@@ -113,6 +113,7 @@ class ShopifyTheme {
     }
 
     _handleTaskError (error, file) {
+        if (!error) return;
         var errorCode = error.code || error.statusCode;
         switch (errorCode) {
             case 429 :
@@ -122,7 +123,7 @@ class ShopifyTheme {
             case 422 :
             case 406 :
             case 403 :
-                gutil.log(error);
+                gutil.log(error, file);
                 break;
             case 401 :
                 gutil.log(error);
@@ -148,8 +149,8 @@ class ShopifyTheme {
         var _this = this;
         return function (next) {
             _this._runAssetTask(file, function (err) {
-                if (err) return _this._handleTaskError (err, file);
-                gutil.log('File', _this._makeAssetKey(file), file.action);
+                _this._handleTaskError (err, file);
+                gutil.log('File', gutil.colors.green(_this._makeAssetKey(file)), file.action);
                 file.done(null);
             });
             setTimeout(()=>next(), wait);
