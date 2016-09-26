@@ -134,6 +134,7 @@ class ShopifyTheme {
                 break;
             case 'ECONNRESET':
                 gutil.log(error);
+                this._addTask(file);
                 break;
             default:
                 gutil.log(error);
