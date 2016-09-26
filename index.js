@@ -273,6 +273,11 @@ class ShopifyTheme {
 
         // Return a Transform stream
         return through.obj(function(file, encoding, callback) {
+            if (file.path && file.path.match(/\s+/)) {
+                gutil.log(gutil.colors.red('Error:'), 'filenames cannot contain spaces!', gutil.colors.green(file.path));
+                this.push(file);
+                return callback;
+            }
             file.done = function (err) {
                 callback(err);
             };
