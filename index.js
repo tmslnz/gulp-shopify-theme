@@ -120,6 +120,7 @@ class ShopifyTheme {
                 this._addTask(file);
                 break;
             case 422 :
+                gutil.log(gutil.colors.red('Likely a Liquid syntax error'));
             case 406 :
             case 403 :
                 gutil.log(error, file);
