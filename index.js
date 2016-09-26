@@ -5,7 +5,6 @@ const PluginError = gutil.PluginError;
 const through = require('through2');
 const async = require('async');
 const Shopify = require('shopify-api-node');
-const path = require('path');
 
 const basedirs = ['layout', 'templates', 'snippets', 'assets', 'config', 'locales'];
 const basedirsRegExp = new RegExp('(' + basedirs.join('|') + ').+', 'i');
