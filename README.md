@@ -14,6 +14,10 @@ $ npm install --save-dev gulp-shopify-theme
 
 ## Features
 
+- Queue [Shopify API][sapi] calls respecting the 40-call / 2 call/sec limits
+- Support idiomatic Gulp.js workflow ( .pipe( shopifytheme.stream( _options_ ) ))
+- Support purging all theme files on Shopify (for cleanup and reupload)
+
 ## Usage	
 
 A full working example can be found here: [gist.github.com/tmslnz/1d025baaa…](https://gist.github.com/tmslnz/1d025baaa7557a2d994032aa88fb61b3)
@@ -30,7 +34,7 @@ var shopifyConfig = {
 
 gulp.task( 'copy', ['shopify-theme-init'], function () {
     return gulp.src( [ 'src/{layout,config,snippets,templates,locales}/**/*.*' ] )
-        .pipe( shopifytheme.sync() );
+        .pipe( shopifytheme.stream() );
 });
 
 gulp.task( 'shopify-theme-init', function () {
@@ -38,3 +42,9 @@ gulp.task( 'shopify-theme-init', function () {
 });
 ```
 
+### Methods
+
+- `shopifytheme.create( _options_ )`
+- `shopifytheme.init( _options_ )`
+- `shopifytheme.stream( _options_ )`
+- `shopifytheme.purge()`
