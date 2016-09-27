@@ -1,8 +1,21 @@
+<img src="media/logo.png" alt="gulp-shopify-theme" width="500" height="284">
+[![npm](https://img.shields.io/npm/v/npm.svg?maxAge=2592000?style=flat-square)](https://www.npmjs.com/package/gulp-shopify-theme)
+
 # Gulp Shopify Theme
 
-Gulp plugin to automatically upload Shopify themes during development.
+Shopify theme development support for Gulp.js. Asynchronous theme assets uploads, retry-on-error.
 
-## Example
+## Install
+
+```shell
+$ npm install --save-dev gulp-shopify-theme
+```
+
+## Features
+
+## Usage	
+
+A full working example can be found here: [https://gist.github.com/tmslnz/1d025baaa7557a2d994032aa88fb61b3]()
 
 ```js
 var shopifyTheme = require('gulp-shopify-theme').create();
@@ -14,12 +27,13 @@ var shopifyConfig = {
     "theme_id": "12345678…"
 }
 
-gulp.task( 'copy', ['init'], function () {
+gulp.task( 'copy', ['shopify-theme-init'], function () {
     return gulp.src( [ 'src/{layout,config,snippets,templates,locales}/**/*.*' ] )
         .pipe( shopifytheme.sync() );
 });
 
-gulp.task( 'shopifyThemeInit', function () {
+gulp.task( 'shopify-theme-init', function () {
     shopifyTheme.init(shopifyConfig);
 });
 ```
+
