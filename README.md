@@ -25,8 +25,8 @@ $ npm install --save-dev gulp-shopify-theme
 A full working example can be found here: [gist.github.com/tmslnz/1d025baaa…](https://gist.github.com/tmslnz/1d025baaa7557a2d994032aa88fb61b3)
 
 ```js
-var shopifyTheme = require('gulp-shopify-theme').create();
-var shopifyConfig = {
+var shopifytheme = require('gulp-shopify-theme').create();
+var shopifyconfig = {
     "api_key": "8a1a2001d06ff…",
     "password": "51f8c8de49ee28…",
     "shared_secret": "51f8c8de49ee51…",
@@ -40,17 +40,20 @@ gulp.task( 'copy', ['shopify-theme-init'], function () {
 });
 
 gulp.task( 'shopify-theme-init', function () {
-    shopifyTheme.init(shopifyConfig);
+    shopifytheme.init(shopifyconfig);
 });
 ```
 
 ### Methods
 
 - shopifytheme.**create( _options_ )**
+
 	Returns a new instance. The instance will do nothing until `.init(_options_)` is called on it.
 - shopifytheme.**init( _options_ )**
+
 	Initialises an instance with `options`. The plugin will wait for, and queue, new files as they come through. 
 - shopifytheme.**stream( _options_ )**
+
 	Use this to stream any theme file to the plugin.
 
 	```js
@@ -62,6 +65,7 @@ gulp.task( 'shopify-theme-init', function () {
 	Passing `theme_id` is optional if you have already passed it to the instance's configuration on `init()`. However if used it will override the pre-exisiting `theme_id`. If no `theme_id` is present an error is thrown.
 
 - shopifytheme.**purge()**
+
 	This will **delete** all theme files from Shopify. Equivalent to going to the Shopify Admin and deleting each file by hand (eww!).  
 	Use with caution, of course.
 
