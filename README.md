@@ -4,7 +4,7 @@
 
 # Gulp Shopify Theme
 
-Shopify theme development support for Gulp.js. Asynchronous theme assets uploads, retry-on-error.
+Shopify theme development support for Gulp.js. Asynchronous theme assets uploads, retry-on-error, remote purge.
 
 ## Install
 
@@ -15,7 +15,7 @@ $ npm install --save-dev gulp-shopify-theme
 ## Features
 
 - Queue [Shopify API][sapi] calls respecting the 40-call<small>/burst</small> / 2 call<small>/sec</small> limits
-- Support idiomatic Gulp.js workflow: `.pipe(shopifytheme.stream( _options_ ))`
+- Support idiomatic Gulp.js workflow: `.pipe(shopifytheme.stream( options ))`
 - Support purging all theme files on Shopify (for cleanup and reupload)
 - Multiple instance support. Sync multiple themes via a single `gulpfile.js`
 - Uses the excellent Microapps' [`shopify-api-node`](https://github.com/microapps/Shopify-api-node) as the API wrapper
@@ -48,7 +48,7 @@ gulp.task( 'shopify-theme-init', function () {
 
 - shopifytheme.**create( _options_ )**
 
-	Returns a new instance. The instance will do nothing until `.init(_options_)` is called on it.
+	Returns a new instance. The instance will do nothing until `.init( options )` is called on it.
 - shopifytheme.**init( _options_ )**
 
 	Initialises an instance with `options`. The plugin will wait for, and queue, new files as they come through. 
