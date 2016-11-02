@@ -6,7 +6,7 @@ const through = require('through2');
 const async = require('async');
 const Shopify = require('shopify-api-node');
 
-const basedirs = ['layout', 'templates', 'snippets', 'assets', 'config', 'locales'];
+const basedirs = ['layout', 'templates', 'snippets', 'assets', 'config', 'locales', 'sections'];
 const basedirsRegExp = new RegExp('(' + basedirs.join('|') + ').+', 'i');
 const protectedKeys = [
     'config/settings_data.json',
