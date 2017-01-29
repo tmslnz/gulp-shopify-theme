@@ -1,6 +1,6 @@
 {
   "name": "gulp-shopify-theme",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "Gulp plugin to automatically upload Shopify themes during development.",
   "main": "index.js",
   "scripts": {
