@@ -1,4 +1,4 @@
-<img src="//i.imgur.com/r7qsbrJ.png" alt="gulp-shopify-theme" width="500" height="284">
+<img src="https://i.imgur.com/r7qsbrJ.png" alt="gulp-shopify-theme" width="500" height="284"/>
 
 [![npm](https://img.shields.io/npm/v/gulp-shopify-theme.svg?maxAge=2592000?style=flat-square)](https://www.npmjs.com/package/gulp-shopify-theme)
 
