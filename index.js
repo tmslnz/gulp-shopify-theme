@@ -258,7 +258,7 @@ class ShopifyTheme {
         return through.obj(function (file, enc, cb) { this.push(); cb() });
     }
 
-    stream (options) {
+    stream (options, cb) {
         // Stream right through if we are not initialised.
         if (!this._initialised) return this._noopStream();
 
@@ -276,9 +276,11 @@ class ShopifyTheme {
             if (file.path && file.path.match(/\s+/)) {
                 gutil.log(gutil.colors.red('Error:'), 'filenames cannot contain spaces!', gutil.colors.green(file.path));
                 this.push(file);
+                if (cb) cb()
                 return callback;
             }
             file.done = function (err) {
+                if (cb) cb()
                 callback(err);
             };
             if (file.isBuffer()) {
