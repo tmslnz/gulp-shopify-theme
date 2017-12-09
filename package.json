@@ -1,7 +1,7 @@
 {
   "name": "gulp-shopify-theme",
-  "version": "1.0.14",
-  "description": "Gulp plugin to automatically upload Shopify themes during development.",
+  "version": "1.0.15",
+  "description": "Gulp plugin for Shopify theme development",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,12 +11,20 @@
     "type": "git",
     "url": "https://github.com/tmslnz/gulp-shopify-theme.git"
   },
-  "keywords": ["gulp", "shopify", "upload", "theme", "theme-development", "shopify-upload", "shopify-theme"],
+  "keywords": [
+    "gulp",
+    "shopify",
+    "upload",
+    "theme",
+    "theme-development",
+    "shopify-upload",
+    "shopify-theme"
+  ],
   "license": "MIT",
   "dependencies": {
-    "async": "^2.0.1",
-    "gulp-util": "^3.0.7",
-    "shopify-api-node": "^1.2.0",
-    "through2": "^2.0.1"
+    "async": "^2.6.0",
+    "gulp-util": "^3.0.8",
+    "shopify-api-node": "^2.10.0",
+    "through2": "^2.0.3"
   }
 }

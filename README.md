@@ -1,10 +1,17 @@
-<img src="https://i.imgur.com/r7qsbrJ.png" alt="gulp-shopify-theme" width="500" height="284"/>
+<img src="https://imgur.com/asPMNcE.png" alt="gulp-shopify-theme" width="363" height="140"/>
 
 [![npm](https://img.shields.io/npm/v/gulp-shopify-theme.svg?maxAge=2592000?style=flat-square)](https://www.npmjs.com/package/gulp-shopify-theme)
 
 # Gulp Shopify Theme
 
-Shopify theme development support for Gulp.js. Asynchronous theme assets uploads, retry-on-error, remote purge.
+[Gulp.js](https://gulpjs.com) plugin for Shopify theme development.
+
+Highlights:
+
+- Asynchronous theme assets uploads.
+- Retry on error.
+- Bulk theme files deletion.
+- Multiple instance support.
 
 ## Install
 
@@ -20,7 +27,7 @@ $ npm install --save-dev gulp-shopify-theme
 - Multiple instance support. Sync multiple themes via a single `gulpfile.js`
 - Uses the excellent Microapps' [`shopify-api-node`](https://github.com/microapps/Shopify-api-node) as the API wrapper
 
-## Usage	
+## Usage
 
 A full working example can be found here: [gist.github.com/tmslnz/1d025baaa…](https://gist.github.com/tmslnz/1d025baaa7557a2d994032aa88fb61b3)
 
@@ -51,7 +58,7 @@ gulp.task( 'shopify-theme-init', function () {
 	Returns a new instance. The instance will do nothing until `.init( options )` is called on it.
 - shopifytheme.**init( _options_ )**
 
-	Initialises an instance with `options`. The plugin will wait for, and queue, new files as they come through. 
+	Initialises an instance with `options`. The plugin will wait for, and queue, new files as they come through.
 - shopifytheme.**stream( _options_ )**
 
 	Use this to stream any theme file to the plugin.
@@ -66,7 +73,7 @@ gulp.task( 'shopify-theme-init', function () {
 
 - shopifytheme.**purge()**
 
-	This will **delete** all theme files from Shopify. Equivalent to going to the Shopify Admin and deleting each file by hand (eww!).  
+	This will **delete** all theme files from Shopify. Equivalent to going to the Shopify Admin and deleting each file by hand (eww!).
 	Use with caution, of course.
 
 	`.purge()` honours a blacklist of _un_deletable files (e.g. `layout/theme.liquid`)
