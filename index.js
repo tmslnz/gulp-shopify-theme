@@ -25,7 +25,7 @@ var shopifyThemeInstances = [];
 function makeShopifyTheme (options) {
     var shopifyTheme;
     var previous = shopifyThemeInstances.filter((instance)=>{
-        return options.shop_name === instance._shop_name && options.api_key === instance._api_key;
+        return options.shop_name === instance._shopName && options.api_key === instance._apiKey;
     });
     if (previous.length) return previous[0];
     shopifyTheme = new ShopifyTheme( options );
@@ -86,15 +86,19 @@ class ShopifyTheme {
         options = options || {};
         this._options = options;
         this._queueTasks = [];
-        this._shop_name = options.shop_name;
-        this._api_key = options.api_key;
+        this._shopName = options.shop_name || options.shopName;
+        this._apiKey = options.api_key || options.apiKey;
         this._password = options.password;
-        this._theme_id = options.theme_id;
+        this._themeId = options.theme_id || options.shopName;
         this._root = options.root;
         if (isInit && (!options.shop_name || !options.api_key)) {
             throw new Error('Missing configuration');
         } else if (options.shop_name && options.api_key) {
-            this.api = new Shopify( options.shop_name, options.api_key, options.password );
+            this.api = new Shopify({
+                shopName: this._shopName,
+                apiKey: this._apiKey,
+                password: this._password,
+            });
             this._initialised = true;
         }
     }
@@ -184,7 +188,7 @@ class ShopifyTheme {
                 file.action = 'added';
                 verb = 'create';
         }
-        this.api.asset[verb](this._theme_id, params)
+        this.api.asset[verb](this._themeId, params)
             .then(function () { callback(null) })
             .catch(function (err) { callback(err) });
     }
@@ -232,13 +236,13 @@ class ShopifyTheme {
         if (!this._initialised) return this._passthrough();
 
         done = done || function () {};
-        this._theme_id = (options) ? options.theme_id : this._theme_id;
-        if (!this._theme_id) {
+        this._themeId = (options) ? options.theme_id : this._themeId;
+        if (!this._themeId) {
             throw new Error('Missing {theme_id: "xxxx"}');
         }
         setTimeout(this._queueStart.bind(this), 0);
         var _this = this;
-        this.api.asset.list(this._theme_id)
+        this.api.asset.list(this._themeId)
             .then(function (list) {
                 list.forEach(function (asset) {
                     if (protectedKeys.indexOf(asset.key) >= 0) return;
@@ -266,8 +270,8 @@ class ShopifyTheme {
         if (!this._initialised) return this._passthrough();
 
         // Theme ID is required for /assets operations
-        this._theme_id = (options) ? options.theme_id : this._theme_id;
-        if (!this._theme_id) {
+        this._themeId = (options) ? options.theme_id : this._themeId;
+        if (!this._themeId) {
             throw new Error('Missing {theme_id: "xxxx"}');
         }
         // Start the queue loop
