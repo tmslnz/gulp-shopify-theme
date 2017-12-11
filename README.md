@@ -29,7 +29,7 @@ $ npm install --save-dev gulp-shopify-theme
 
 ## Usage
 
-A full working example can be found here: [gist.github.com/tmslnz/1d025baaa…](https://gist.github.com/tmslnz/1d025baaa7557a2d994032aa88fb61b3)
+A working example can be found here: [gist.github.com/tmslnz/1d025baaa…](https://gist.github.com/tmslnz/1d025baaa7557a2d994032aa88fb61b3)
 
 ```js
 var shopifytheme = require('gulp-shopify-theme').create();
