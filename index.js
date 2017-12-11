@@ -4,6 +4,7 @@ const gutil = require('gulp-util');
 const PluginError = gutil.PluginError;
 const through = require('through2');
 const async = require('async');
+const path = require('path');
 const Shopify = require('shopify-api-node');
 
 const basedirs = ['layout', 'templates', 'snippets', 'assets', 'config', 'locales', 'sections'];
@@ -104,14 +105,14 @@ class ShopifyTheme {
     }
 
     _makeAssetKey (file) {
-        var themeRoot = this._root ? this._root + '/' : null;
+        var themeRoot = this._root ? path.posix.join(this._root, '/') : null;
         var fullpath = file.path ? file.path : file.history.slice(-1).pop();
         var basepath = fullpath.split(themeRoot).pop().match(basedirsRegExp);
         if (!basepath) {
             gutil.log('Invalid resource path');
             throw new Error('Invalid resource path');
         }
-        basepath = basepath[0];
+        basepath = path.posix.join(basepath[0]);
         return encodeURI(basepath);
     }
 
