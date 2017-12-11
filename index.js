@@ -86,7 +86,7 @@ class ShopifyTheme {
     makeConfig (options, isInit) {
         options = options || {};
         this._options = options;
-        this._queueTasks = [];
+        this._taskQueue = [];
         this._shopName = options.shop_name || options.shopName;
         this._apiKey = options.api_key || options.apiKey;
         this._password = options.password;
@@ -195,7 +195,7 @@ class ShopifyTheme {
     }
 
     /*
-    Continously take tasks from the _queueTasks list,
+    Continously take tasks from the _taskQueue list,
     A task is a hash of:
         - key: 'templates/index.liquid'
         - consumer: fn(callback)
@@ -204,10 +204,10 @@ class ShopifyTheme {
         var _this = this;
         async.whilst(
             function condition () {
-                return !!_this._queueTasks.length || _this._break;
+                return !!_this._taskQueue.length || _this._break;
             },
             function iterator (next) {
-                var task = _this._queueTasks.shift();
+                var task = _this._taskQueue.shift();
                 task.consumer(next);
             },
             function end () {
@@ -221,13 +221,13 @@ class ShopifyTheme {
 
     _addTask (file) {
         var key = this._makeAssetKey(file);
-        for (var index = 0; index < this._queueTasks.length; index++) {
-            if (this._queueTasks[index].key === key) {
+        for (var index = 0; index < this._taskQueue.length; index++) {
+            if (this._taskQueue[index].key === key) {
                 gutil.log('Replacing task for:', key);
-                this._queueTasks.splice(index, 1);
+                this._taskQueue.splice(index, 1);
             }
         }
-        this._queueTasks.push({
+        this._taskQueue.push({
             key: key,
             consumer: this._makeConsumer(file)
         });
