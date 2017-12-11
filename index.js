@@ -178,7 +178,7 @@ class ShopifyTheme {
                 params.key = this._makeAssetKey(file);
                 params.attachment = file.contents.toString('base64');
                 verb = 'update'; break;
-            default: 
+            default:
                 params.key = this._makeAssetKey(file);
                 params.attachment = file.contents.toString('base64');
                 file.action = 'added';
@@ -229,7 +229,7 @@ class ShopifyTheme {
     }
 
     purge (options, done) {
-        if (!this._initialised) return this._noopStream();
+        if (!this._initialised) return this._passthrough();
 
         done = done || function () {};
         this._theme_id = (options) ? options.theme_id : this._theme_id;
@@ -254,13 +254,16 @@ class ShopifyTheme {
             });
     }
 
-    _noopStream () {
-        return through.obj(function (file, enc, cb) { this.push(); cb() });
+    _passthrough () {
+        return through.obj(function (file, enc, cb) {
+            this.push();
+            cb();
+        });
     }
 
     stream (options) {
         // Stream right through if we are not initialised.
-        if (!this._initialised) return this._noopStream();
+        if (!this._initialised) return this._passthrough();
 
         // Theme ID is required for /assets operations
         this._theme_id = (options) ? options.theme_id : this._theme_id;
