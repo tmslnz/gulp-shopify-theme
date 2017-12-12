@@ -149,12 +149,17 @@ class ShopifyTheme {
         var wait = (this.api.callLimits.remaining <= 1) ? 600 : 0;
         var _this = this;
         return function (next) {
-            _this._runAssetTask(file, function (err) {
-                _this._handleTaskError (err, file);
-                file.done(null);
-            });
-            setTimeout(()=>next(), wait);
-                    gutil.log(file.action + ':', gutil.colors.green(_this._makeAssetKey(file)));
+            setTimeout(next, wait);
+            return _this._runAssetTask(file)
+                .then(function (res) {
+                    gutil.log(PLUGIN_NAME, file.action + ':', gutil.colors.green(_this._makeAssetKey(file)));
+                    file.done(null);
+                })
+                .catch(function (error) {
+                    _this._handleTaskError (error, file);
+                    var err = new PluginError(PLUGIN_NAME, error, {showStack: true});
+                    file.done(err);
+                })
         };
     }
 
@@ -163,7 +168,7 @@ class ShopifyTheme {
         The callback(err) is called by the Promise returned by the API
         A file is a Vinyl object or a hash.
     */
-    _runAssetTask (file, callback) {
+    _runAssetTask (file) {
         var params = {};
         var verb;
         switch (file.action) {
@@ -184,9 +189,7 @@ class ShopifyTheme {
                 file.action = 'added';
                 verb = 'create';
         }
-        this.api.asset[verb](this._themeId, params)
-            .then(function () { callback(null) })
-            .catch(function (err) { callback(err) });
+        return this.api.asset[verb](this._themeId, params);
     }
 
     /*
