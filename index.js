@@ -87,6 +87,7 @@ class ShopifyTheme {
         options = options || {};
         this._options = options;
         this._taskQueue = [];
+        this._queueStopped = true;
         this._shopName = options.shop_name || options.shopName;
         this._apiKey = options.api_key || options.apiKey;
         this._password = options.password;
@@ -211,6 +212,7 @@ class ShopifyTheme {
                 task.consumer(next);
             },
             function end () {
+                if (_this._queueStopped) return;
                 setTimeout(_this._queue.bind(_this), 100);
             }
         );
@@ -241,7 +243,9 @@ class ShopifyTheme {
         if (!this._themeId) {
             throw new Error('Missing {theme_id: "xxxx"}');
         }
-        setTimeout(this._queueStart.bind(this), 0);
+        if (this._queueStopped) {
+            setTimeout(this._queueStart.bind(this), 0);
+        }
         var _this = this;
         this.api.asset.list(this._themeId)
             .then(function (list) {
