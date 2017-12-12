@@ -204,7 +204,7 @@ class ShopifyTheme {
         var _this = this;
         async.whilst(
             function condition () {
-                return !!_this._taskQueue.length || _this._break;
+                return !!_this._taskQueue.length || _this._queueStopped;
             },
             function iterator (next) {
                 var task = _this._taskQueue.shift();
@@ -216,8 +216,8 @@ class ShopifyTheme {
         );
     }
 
-    _queueStart () { this._break = false; this._queue(); }
-    _queueStop () { this._break = true; }
+    _queueStart () { this._queueStopped = false; this._queue(); }
+    _queueStop () { this._queueStopped = true; }
 
     _addTask (file) {
         var key = this._makeAssetKey(file);
