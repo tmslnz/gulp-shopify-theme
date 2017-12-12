@@ -157,10 +157,10 @@ class ShopifyTheme {
         return function (next) {
             _this._runAssetTask(file, function (err) {
                 _this._handleTaskError (err, file);
-                gutil.log('File', gutil.colors.green(_this._makeAssetKey(file)), file.action);
                 file.done(null);
             });
             setTimeout(()=>next(), wait);
+                    gutil.log(file.action + ':', gutil.colors.green(_this._makeAssetKey(file)));
         };
     }
 
@@ -286,9 +286,9 @@ class ShopifyTheme {
         // Return a Transform stream
         return through.obj(function(file, encoding, callback) {
             if (file.path && file.path.match(/\s+/)) {
-                gutil.log(gutil.colors.red('Error:'), 'filenames cannot contain spaces!', gutil.colors.green(file.path));
+                let err = new PluginError('gulp-shopify-theme', 'Shopify filenames cannot contain spaces: ' + gutil.colors.green(file.path));
                 this.push(file);
-                return callback;
+                return callback(err);
             }
             file.done = function (err) {
                 callback(err);
