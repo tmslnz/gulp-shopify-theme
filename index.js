@@ -281,7 +281,7 @@ class ShopifyTheme {
         // Return a Transform stream
         return through.obj(function(file, encoding, callback) {
             if (file.path && file.path.match(/\s+/)) {
-                let err = new PluginError('gulp-shopify-theme', 'Shopify filenames cannot contain spaces: ' + gutil.colors.green(file.path));
+                let err = new PluginError(PLUGIN_NAME, 'Shopify filenames cannot contain spaces: ' + gutil.colors.green(file.path));
                 this.push(file);
                 return callback(err);
             }
