@@ -121,29 +121,23 @@ class ShopifyTheme {
         if (!error) return;
         var errorCode = error.code || error.statusCode;
         switch (errorCode) {
+            // Retry
             case 429 :
-                gutil.log(error);
+            case 'ETIMEDOUT':
+            case 'ECONNRESET':
                 this._addTask(file);
                 break;
+            // Unprocessable entity
             case 422 :
-                gutil.log(gutil.colors.red('Likely a Liquid syntax error'));
+                gutil.log(gutil.colors.red('Error 422 (Unprocessable Entity)'), 'Likely a Liquid syntax error');
+            // Invalid request
             case 406 :
             case 403 :
-                gutil.log(error, file);
                 break;
+            // API Request is not valid for this shop
             case 401 :
-                gutil.log(error);
-                break;
-            case 'ETIMEDOUT':
-                gutil.log(error);
-                this._addTask(file);
-                break;
-            case 'ECONNRESET':
-                gutil.log(error);
-                this._addTask(file);
                 break;
             default:
-                gutil.log(error);
         }
     }
 
