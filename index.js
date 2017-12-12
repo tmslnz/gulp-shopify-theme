@@ -219,7 +219,7 @@ class ShopifyTheme {
         var key = this._makeAssetKey(file);
         for (var index = 0; index < this._taskQueue.length; index++) {
             if (this._taskQueue[index].key === key) {
-                gutil.log('Replacing task for:', key);
+                gutil.log(PLUGIN_NAME, 'Replacing task for:', key);
                 this._taskQueue.splice(index, 1);
             }
         }
@@ -253,6 +253,7 @@ class ShopifyTheme {
                 });
             })
             .catch(function (err) {
+                let err = new PluginError(PLUGIN_NAME, err);
                 gutil.log(err);
             });
     }
