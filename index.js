@@ -121,23 +121,23 @@ class ShopifyTheme {
         if (!error) return;
         var errorCode = error.code || error.statusCode;
         switch (errorCode) {
-            // Retry
-            case 429 :
-            case 'ETIMEDOUT':
-            case 'ECONNRESET':
-                this._addTask(file);
-                break;
-            // Unprocessable entity
-            case 422 :
-                gutil.log(gutil.colors.red('Error 422 (Unprocessable Entity)'), 'Likely a Liquid syntax error');
-            // Invalid request
-            case 406 :
-            case 403 :
-                break;
-            // API Request is not valid for this shop
-            case 401 :
-                break;
-            default:
+        // Retry
+        case 429 :
+        case 'ETIMEDOUT':
+        case 'ECONNRESET':
+            this._addTask(file);
+            break;
+        // Unprocessable entity
+        case 422 :
+            gutil.log(gutil.colors.red('Error 422 (Unprocessable Entity)'), 'Likely a Liquid syntax error');
+        // Invalid request
+        case 406 :
+        case 403 :
+            break;
+        // API Request is not valid for this shop
+        case 401 :
+            break;
+        default:
         }
     }
 
@@ -172,22 +172,22 @@ class ShopifyTheme {
         var params = {};
         var verb;
         switch (file.action) {
-            case 'deleted':
-                params.asset = {key: this._makeAssetKey(file)};
-                verb = 'delete'; break;
-            case 'added':
-                params.key = this._makeAssetKey(file);
-                params.attachment = file.contents.toString('base64');
-                verb = 'create'; break;
-            case 'changed':
-                params.key = this._makeAssetKey(file);
-                params.attachment = file.contents.toString('base64');
-                verb = 'update'; break;
-            default:
-                params.key = this._makeAssetKey(file);
-                params.attachment = file.contents.toString('base64');
-                file.action = 'added';
-                verb = 'create';
+        case 'deleted':
+            params.asset = {key: this._makeAssetKey(file)};
+            verb = 'delete'; break;
+        case 'added':
+            params.key = this._makeAssetKey(file);
+            params.attachment = file.contents.toString('base64');
+            verb = 'create'; break;
+        case 'changed':
+            params.key = this._makeAssetKey(file);
+            params.attachment = file.contents.toString('base64');
+            verb = 'update'; break;
+        default:
+            params.key = this._makeAssetKey(file);
+            params.attachment = file.contents.toString('base64');
+            file.action = 'added';
+            verb = 'create';
         }
         return this.api.asset[verb](this._themeId, params);
     }
@@ -293,12 +293,10 @@ class ShopifyTheme {
             };
             if (file.isBuffer()) {
                 _this._addTask(file);
-            }
-            else if (file.isNull()) {
+            } else if (file.isNull()) {
                 file.action = 'deleted';
                 _this._addTask(file);
-            }
-            else if (file.isStream()) {
+            } else if (file.isStream()) {
                 process.nextTick(function () {
                     callback(new PluginError('Streams are not supported'));
                 });
