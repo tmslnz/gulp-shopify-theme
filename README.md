@@ -49,6 +49,15 @@ gulp.task( 'copy', ['shopify-theme-init'], function () {
 gulp.task( 'shopify-theme-init', function () {
     shopifytheme.init(shopifyconfig);
 });
+
+gulp.task( 'watch', function () {
+	//
+	// …watch and compile tasks…
+	//
+
+	shopifytheme.on('done', browserSync.reload());
+});
+
 ```
 
 ### Methods
@@ -69,7 +78,7 @@ gulp.task( 'shopify-theme-init', function () {
         .pipe( gulp.dest( 'dist' ) )
 	```
 
-	Passing `theme_id` is optional if you have already passed it to the instance's configuration on `init()`. However if used it will override the pre-exisiting `theme_id`. If no `theme_id` is present an error is thrown.
+	Passing **`theme_id` is optional** if you have already passed it to the instance's configuration on `init()`. However if used it will override the pre-exisiting `theme_id`. If no `theme_id` is present an error is thrown.
 
 - shopifytheme.**purge()**
 
@@ -82,10 +91,18 @@ gulp.task( 'shopify-theme-init', function () {
 
 For now it's just API configuration.
 
-- **api_key**
+- **apiKey**
 - **password**
-- **shared_secret**
-- **shop_name**
-- **theme_id**
+- **shopName**
+- **themeId**
+- **autoLimit** (see [`shopify-api-node`](https://www.npmjs.com/package/shopify-api-node))
+- **timeout**
+
+### Events
+
+The plugin instance emits two events `done` and `error` at the end of a sync task queue.
+
+On `done` the event handler receives the list of files that have successfully synced.  
+On `error` the handler is passed whatever error was thrown in the process. 
 
 [sapi]: https://help.shopify.com/api/reference/asset
