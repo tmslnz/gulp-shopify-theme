@@ -5,6 +5,7 @@ const PluginError = gutil.PluginError;
 const through = require('through2');
 const async = require('async');
 const path = require('path');
+const EventEmitter = require('events');
 const Shopify = require('shopify-api-node');
 
 const basedirs = ['layout', 'templates', 'snippets', 'assets', 'config', 'locales', 'sections'];
@@ -74,8 +75,9 @@ function create (options) {
     return makeShopifyTheme(options);
 }
 
-class ShopifyTheme {
+class ShopifyTheme extends EventEmitter {
     constructor(options) {
+        super();
         this.makeConfig(options);
     }
 
@@ -225,9 +227,11 @@ class ShopifyTheme {
                 // if (!taskPromisers.length) return;
                 Promise.all(taskPromisers)
                     .then((responses)=>{
+                        _this.emit('done', responses);
                         gutil.log(PLUGIN_NAME, 'Done');
                     })
                     .catch((error)=>{
+                        _this.emit('error', error);
                         gutil.log( new PluginError(PLUGIN_NAME, error, {showStack: true}) );
                     })
             }
