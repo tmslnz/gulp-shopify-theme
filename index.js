@@ -1,5 +1,3 @@
-const PLUGIN_NAME = 'gulp-shopify-theme';
-
 const gutil = require('gulp-util');
 const PluginError = gutil.PluginError;
 const through = require('through2');
@@ -7,6 +5,10 @@ const async = require('async');
 const path = require('path');
 const EventEmitter = require('events');
 const Shopify = require('shopify-api-node');
+
+const PLUGIN_NAME = 'gulp-shopify-theme';
+const PLUGIN_NAME_COLOR = gutil.colors.inverse(' ', PLUGIN_NAME, ' ');
+const PLUGIN_NAME_ERROR_COLOR = gutil.colors.white.bgRed(' ', PLUGIN_NAME, ' ');
 
 const basedirs = ['layout', 'templates', 'snippets', 'assets', 'config', 'locales', 'sections'];
 const basedirsRegExp = new RegExp('(' + basedirs.join('|') + ').+', 'i');
@@ -130,17 +132,21 @@ class ShopifyTheme extends EventEmitter {
         case 429 :
         case 'ETIMEDOUT':
         case 'ECONNRESET':
+            gutil.log(PLUGIN_NAME_COLOR, 'retry: ' + gutil.colors.yellow(this._makeAssetKey(file)));
             this._addTask(file);
             break;
         // Unprocessable entity
         case 422 :
-            gutil.log(gutil.colors.red('Error 422 (Unprocessable Entity)'), 'Likely a Liquid syntax error');
+            gutil.log(PLUGIN_NAME_ERROR_COLOR, 'syntax error or wrong path at ' + gutil.colors.red(this._makeAssetKey(file)));
+            break;
         // Invalid request
         case 406 :
         case 403 :
+            gutil.log(PLUGIN_NAME_ERROR_COLOR, 'invalid request at ' + gutil.colors.red(this._makeAssetKey(file)))
             break;
         // API Request is not valid for this shop
         case 401 :
+            gutil.log(PLUGIN_NAME_ERROR_COLOR, 'invalid shop. Check your config.')
             break;
         default:
         }
@@ -155,7 +161,7 @@ class ShopifyTheme extends EventEmitter {
         return function (next) {
             return _this._runAssetTask(file)
                 .then(function (res) {
-                    gutil.log(PLUGIN_NAME, file.action + ':', gutil.colors.green(_this._makeAssetKey(file)));
+                    gutil.log(PLUGIN_NAME_COLOR, file.action + ':', gutil.colors.green(_this._makeAssetKey(file)));
                     _this._taskQueue.shift();
                     file.done();
                     next();
@@ -233,7 +239,7 @@ class ShopifyTheme extends EventEmitter {
                 Promise.all(taskPromisers)
                     .then((responses)=>{
                         _this.emit('done', responses);
-                        gutil.log(PLUGIN_NAME, 'Done');
+                        gutil.log(PLUGIN_NAME_COLOR, gutil.colors.bold('Done'));
                     })
                     .catch((error)=>{
                         _this.emit('error', error);
@@ -246,11 +252,11 @@ class ShopifyTheme extends EventEmitter {
     _addTask (file) {
         var key = this._makeAssetKey(file);
 
-        gutil.log(PLUGIN_NAME, 'Queuing:', key);
+        gutil.log(PLUGIN_NAME_COLOR, 'queued: ' + gutil.colors.yellow(key));
 
         for (var index = 0; index < this._taskQueue.length; index++) {
             if (this._taskQueue[index].key === key) {
-                gutil.log(PLUGIN_NAME, 'Replacing task for:', key);
+                gutil.log(PLUGIN_NAME_COLOR, 'requeued: ' + gutil.colors.yellow(key));
                 this._taskQueue.splice(index, 1);
             }
         }
