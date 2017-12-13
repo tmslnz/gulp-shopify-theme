@@ -207,6 +207,8 @@ class ShopifyTheme extends EventEmitter {
         - consumer: fn(callback)
     */
     _queue () {
+        if (this._queueRunning) return;
+        this._queueRunning = true;
         var _this = this;
         var taskPromisers = [];
         async.whilst(
@@ -222,6 +224,7 @@ class ShopifyTheme extends EventEmitter {
                 Promise.all() will complete once all tasks are finished or any error out.
             */
             function end (error) {
+                _this._queueRunning = false;
                 if (error) {
                     _this._taskQueue = [];
                     return;
@@ -242,6 +245,9 @@ class ShopifyTheme extends EventEmitter {
 
     _addTask (file) {
         var key = this._makeAssetKey(file);
+
+        gutil.log(PLUGIN_NAME, 'Queuing:', key);
+
         for (var index = 0; index < this._taskQueue.length; index++) {
             if (this._taskQueue[index].key === key) {
                 gutil.log(PLUGIN_NAME, 'Replacing task for:', key);
@@ -254,12 +260,7 @@ class ShopifyTheme extends EventEmitter {
             consumer: this._makeConsumer(file)
         });
 
-        // Start the queue on the first task added
-        if (this._taskQueue.length === 1) {
-            this._queue();
-        }
-
-        gutil.log(PLUGIN_NAME, 'Queuing:', key);
+        this._queue();
     }
 
     purge (options) {
@@ -314,8 +315,13 @@ class ShopifyTheme extends EventEmitter {
             // Move the file down the chain right away
             this.push(file);
 
-            file.done = function (err) {
-                callback(err);
+            if (options && options.batchMode) {
+                callback();
+                file.done = function () {};
+            } else {
+                file.done = function (err) {
+                    callback(err);
+                }
             }
 
             if (file.path && file.path.match(/\s+/)) {
