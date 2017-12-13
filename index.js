@@ -157,11 +157,13 @@ class ShopifyTheme extends EventEmitter {
                 .then(function (res) {
                     gutil.log(PLUGIN_NAME, file.action + ':', gutil.colors.green(_this._makeAssetKey(file)));
                     _this._taskQueue.shift();
+                    file.done();
                     next();
                     return res;
                 })
                 .catch(function (error) {
                     _this._taskQueue.shift();
+                    file.done(new PluginError(PLUGIN_NAME, error));
                     _this._handleTaskError (error, file);
                     next(error);
                     return error;
@@ -278,6 +280,7 @@ class ShopifyTheme extends EventEmitter {
                     _this._addTask({
                         path: asset.key,
                         action: 'deleted',
+                        done: function () {},
                     });
                 });
             })
@@ -307,10 +310,13 @@ class ShopifyTheme extends EventEmitter {
 
         // Return a Transform stream
         return through.obj(function(file, encoding, callback) {
-            // Called asynchronously once the task is completed
 
+            // Move the file down the chain right away
             this.push(file);
-            callback();
+
+            file.done = function (err) {
+                callback(err);
+            }
 
             if (file.path && file.path.match(/\s+/)) {
                 let err = new PluginError(PLUGIN_NAME, 'Shopify filenames cannot contain spaces: ' + gutil.colors.green(file.path));
