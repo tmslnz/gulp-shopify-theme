@@ -87,11 +87,10 @@ class ShopifyTheme {
         options = options || {};
         this._options = options;
         this._taskQueue = [];
-        this._queueStopped = true;
         this._shopName = options.shop_name || options.shopName;
         this._apiKey = options.api_key || options.apiKey;
-        this._password = options.password;
         this._themeId = options.theme_id || options.shopName;
+        this._password = options.password;
         this._autoLimit = options.autoLimit || false;
         this._timeout = options.timeout;
         this._root = options.root;
@@ -155,12 +154,15 @@ class ShopifyTheme {
             return _this._runAssetTask(file)
                 .then(function (res) {
                     gutil.log(PLUGIN_NAME, file.action + ':', gutil.colors.green(_this._makeAssetKey(file)));
-                    file.done(null);
+                    _this._taskQueue.shift();
+                    next();
+                    return res;
                 })
                 .catch(function (error) {
+                    _this._taskQueue.shift();
                     _this._handleTaskError (error, file);
-                    var err = new PluginError(PLUGIN_NAME, error, {showStack: true});
-                    file.done(err);
+                    next(error);
+                    return error;
                 })
         };
     }
@@ -202,23 +204,35 @@ class ShopifyTheme {
     */
     _queue () {
         var _this = this;
+        var taskPromisers = [];
         async.whilst(
             function condition () {
-                return !!_this._taskQueue.length || _this._queueStopped;
+                return _this._taskQueue.length !== 0;
             },
             function iterator (next) {
-                var task = _this._taskQueue.shift();
-                task.consumer(next);
+                var task = _this._taskQueue[0];
+                taskPromisers.push(task.consumer(next));
             },
-            function end () {
-                if (_this._queueStopped) return;
-                setTimeout(_this._queue.bind(_this), 100);
+            /*
+                end() is reached *before* all files have finished uploading.
+                Promise.all() will complete once all tasks are finished or any error out.
+            */
+            function end (error) {
+                if (error) {
+                    _this._taskQueue = [];
+                    return;
+                }
+                // if (!taskPromisers.length) return;
+                Promise.all(taskPromisers)
+                    .then((responses)=>{
+                        gutil.log(PLUGIN_NAME, 'Done');
+                    })
+                    .catch((error)=>{
+                        gutil.log( new PluginError(PLUGIN_NAME, error, {showStack: true}) );
+                    })
             }
         );
     }
-
-    _queueStart () { this._queueStopped = false; this._queue(); }
-    _queueStop () { this._queueStopped = true; }
 
     _addTask (file) {
         var key = this._makeAssetKey(file);
@@ -228,23 +242,29 @@ class ShopifyTheme {
                 this._taskQueue.splice(index, 1);
             }
         }
+
         this._taskQueue.push({
             key: key,
             consumer: this._makeConsumer(file)
         });
+
+        // Start the queue on the first task added
+        if (this._taskQueue.length === 1) {
+            this._queue();
+        }
+
         gutil.log(PLUGIN_NAME, 'Queuing:', key);
     }
 
-    purge (options, done) {
+    purge (options) {
         if (!this._initialised) return this._passthrough();
 
-        done = done || function () {};
         this._themeId = (options) ? options.theme_id : this._themeId;
         if (!this._themeId) {
             throw new Error('Missing {theme_id: "xxxx"}');
         }
-        if (this._queueStopped) {
-            setTimeout(this._queueStart.bind(this), 0);
+        if (this._taskQueue.length === 0) {
+            setTimeout(this._queue.bind(this), 0);
         }
         var _this = this;
         this.api.asset.list(this._themeId)
@@ -254,7 +274,6 @@ class ShopifyTheme {
                     _this._addTask({
                         path: asset.key,
                         action: 'deleted',
-                        done: function (err) { done(err); }
                     });
                 });
             })
@@ -271,6 +290,8 @@ class ShopifyTheme {
     }
 
     stream (options) {
+        var _this = this;
+
         // Stream right through if we are not initialised.
         if (!this._initialised) return this._passthrough();
 
@@ -279,20 +300,20 @@ class ShopifyTheme {
         if (!this._themeId) {
             throw new Error('Missing {theme_id: "xxxx"}');
         }
-        // Start the queue loop
-        setTimeout(this._queueStart.bind(this), 0);
-        var _this = this;
 
         // Return a Transform stream
         return through.obj(function(file, encoding, callback) {
+            // Called asynchronously once the task is completed
+
+            this.push(file);
+            callback();
+
             if (file.path && file.path.match(/\s+/)) {
                 let err = new PluginError(PLUGIN_NAME, 'Shopify filenames cannot contain spaces: ' + gutil.colors.green(file.path));
                 this.push(file);
                 return callback(err);
             }
-            file.done = function (err) {
-                callback(err);
-            };
+
             if (file.isBuffer()) {
                 _this._addTask(file);
             } else if (file.isNull()) {
@@ -303,7 +324,6 @@ class ShopifyTheme {
                     callback(new PluginError('Streams are not supported'));
                 });
             }
-            this.push(file);
         });
     }
 }
