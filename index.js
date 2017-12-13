@@ -92,6 +92,8 @@ class ShopifyTheme {
         this._apiKey = options.api_key || options.apiKey;
         this._password = options.password;
         this._themeId = options.theme_id || options.shopName;
+        this._autoLimit = options.autoLimit || false;
+        this._timeout = options.timeout;
         this._root = options.root;
         if (isInit && (!options.shop_name || !options.api_key)) {
             throw new Error('Missing configuration');
@@ -100,6 +102,8 @@ class ShopifyTheme {
                 shopName: this._shopName,
                 apiKey: this._apiKey,
                 password: this._password,
+                autoLimit: this._autoLimit,
+                timeout: this._timeout,
             });
             this._initialised = true;
         }
@@ -146,10 +150,8 @@ class ShopifyTheme {
         used to call async.whilst() next() callback
     */
     _makeConsumer (file) {
-        var wait = (this.api.callLimits.remaining <= 1) ? 600 : 0;
         var _this = this;
         return function (next) {
-            setTimeout(next, wait);
             return _this._runAssetTask(file)
                 .then(function (res) {
                     gutil.log(PLUGIN_NAME, file.action + ':', gutil.colors.green(_this._makeAssetKey(file)));
