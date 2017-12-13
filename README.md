@@ -72,13 +72,22 @@ gulp.task( 'watch', function () {
 
 	Use this to stream any theme file to the plugin.
 
+	Options are:
+	
+	- batchMode
+	- theme_id
+
 	```js
 	gulp.src( [ 'src/js/*.js' ] )
         .pipe( shopifytheme.stream( {theme_id: 12345} ) )
         .pipe( gulp.dest( 'dist' ) )
 	```
 
+	`batchMode` will force `stream()` to return the Gulp stream immediately.
+	In this mode you can subscribe to `done` and `error` to be notified when all tasks have ended.
+
 	Passing **`theme_id` is optional** if you have already passed it to the instance's configuration on `init()`. However if used it will override the pre-exisiting `theme_id`. If no `theme_id` is present an error is thrown.
+
 
 - shopifytheme.**purge()**
 
