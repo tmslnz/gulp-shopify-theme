@@ -322,8 +322,8 @@ class ShopifyTheme extends EventEmitter {
             this.push(file);
 
             if (options && options.batchMode) {
-                callback();
                 file.done = function () {};
+                callback();
             } else {
                 file.done = function (err) {
                     callback(err);
