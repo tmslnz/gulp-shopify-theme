@@ -230,6 +230,7 @@ class ShopifyTheme {
             key: key,
             consumer: this._makeConsumer(file)
         });
+        gutil.log(PLUGIN_NAME, 'Queuing:', key);
     }
 
     purge (options, done) {
@@ -256,8 +257,7 @@ class ShopifyTheme {
                 });
             })
             .catch(function (err) {
-                let err = new PluginError(PLUGIN_NAME, err);
-                gutil.log(err);
+                gutil.log( new PluginError(PLUGIN_NAME, err) );
             });
     }
 
