@@ -310,7 +310,7 @@ class ShopifyTheme extends EventEmitter {
         if (!this._initialised) return this._passthrough();
 
         // Theme ID is required for /assets operations
-        this._themeId = (options) ? options.theme_id : this._themeId;
+        this._themeId = (options && options.themeId) ? options.themeId : this._themeId;
         if (!this._themeId) {
             throw new Error('Missing {theme_id: "xxxx"}');
         }
